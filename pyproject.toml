@@ -1,0 +1,57 @@
+[tool.black]
+line-length = 120
+target-version = ['py39']
+skip-string-normalization = 1
+extend-ignore = "W503"
+
+[tool.pylint]
+    [tool.pylint.main]
+    fail-under = 5
+    jobs = 2
+    limit-inference-results = 100
+    py-version = "3.9"
+    verbose = true
+    init-hook='import sys, os;  sys.path.append(os.path.join(os.path.curdir, "source"))'
+
+    [tool.pylint.messages_control]
+    max-line-length = 120
+    confidence = [
+        "HIGH",
+        "CONTROL_FLOW",
+        "INFERENCE",
+        "INFERENCE_FAILURE",
+        "UNDEFINED"
+    ]
+    enable = [
+        "c-extension-no-member"
+    ]
+    disable = [
+        "raw-checker-failed",
+        "bad-inline-option",
+        "locally-disabled",
+        "file-ignored",
+        "suppressed-message",
+        "useless-suppression",
+        "deprecated-pragma",
+        "use-symbolic-message-instead",
+        "missing-module-docstring",
+        "missing-class-docstring",
+        "missing-function-docstring",
+        "too-few-public-methods",
+        "unnecessary-lambda-assignment",
+        "fixme",
+        "unused-argument"
+    ]
+
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 10
+ignore = ["E731", "W503"]
+exclude = ".git, .mypy_cache, .pytest_cache, build, dist, __pycache__"
+
+[tool.isort]
+profile = "black"
+
+[tool.pycln]
+all = true
