@@ -1,28 +1,43 @@
-# from django.conf import settings
 from django.conf import settings
-from telegram.ext import CommandHandler, Dispatcher
-from telegrambot.handlers.admin import handlers as admin_handlers
-from telegrambot.handlers.onboarding import handlers as onboarding_handlers
-from telegrambot.main import telegram_bot
-
-
-# from telegrambot.main import telegram_bot
-
-
-def setup_dispatcher(dispatch):
-    dispatch.add_handler(CommandHandler('start', onboarding_handlers.command_start))
-    dispatch.add_handler(CommandHandler('admin', admin_handlers.admin))
-    return dispatch
-
+from telegram import Bot, BotCommand, Update
+from telegram.ext import CommandHandler, ConversationHandler, Dispatcher
+from telegrambot import telegram_bot
+from telegrambot.handlers import handlers as general_handlers
+from telegrambot.handlers.gitlab.handlers import registration_gitlab_handlers
+from telegrambot.utils.decorators import only_exists_user
 
 if settings.DEBUG:
-    kwargs = {
-        'workers': 0,
+    dispatcher_kwargs = {
+        'workers': 1,
         'update_queue': None,
     }
 else:
-    kwargs = {
+    dispatcher_kwargs = {
         'workers': 4,
         'update_queue': None,
     }
-dispatcher = setup_dispatcher(Dispatcher(telegram_bot, **kwargs))
+
+setup_commands = {
+    'start': 'Начало работы с ботом',
+    'gitlab': 'Список проектов для запуска в Gitlab',
+}
+
+
+def setup_dispatcher(dispatch: Dispatcher):
+    registration_gitlab_handlers(dispatch)
+    dispatch.add_handler(CommandHandler('start', general_handlers.start))
+    return dispatch
+
+
+def setup_bot_commands(bot_instance: Bot, commands: dict, /) -> None:
+    telegram_bot.delete_my_commands()
+    bot_instance.set_my_commands(
+        [
+            BotCommand(command, description)
+            for command, description in commands.items()
+        ]
+    )
+
+
+setup_bot_commands(telegram_bot, setup_commands)
+dispatcher = setup_dispatcher(Dispatcher(telegram_bot, **dispatcher_kwargs))
