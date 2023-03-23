@@ -10,6 +10,7 @@ def only_exists_user(func: t.Callable) -> t.Callable[[...], t.Optional[t.Any]]:
         if TelegramUserModel.get_user(update, context) is not None:
             return func(update, context)
         else:
-            update.message.reply_text("Пользователь не идентифицирован")
+            update.message.reply_text(f"Пользователь не идентифицирован (user-id={update.effective_user.id})")
             return
+
     return wrapper

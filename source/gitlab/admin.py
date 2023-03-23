@@ -2,10 +2,20 @@ from django.contrib import admin
 from gitlab import models
 
 
+@admin.register(models.GitlabRepositoryBaseModel)
+class GitlabRepositoryAdmin(admin.ModelAdmin):
+    list_display = [
+        'repo_base_url',
+        'created_at',
+        'updated_at',
+    ]
+
+
 @admin.register(models.GitlabRepositoryModel)
 class GitlabRepositoryAdmin(admin.ModelAdmin):
     list_display = [
-        'repo_link',
+        'repository_model',
+        'repository_id',
         'description',
         'is_active',
         'created_at',

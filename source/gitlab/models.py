@@ -1,8 +1,26 @@
 from django.db import models
 
 
+class GitlabRepositoryBaseModel(models.Model):
+    repo_base_url = models.URLField(max_length=255, null=False, unique=True, verbose_name="Базовая ссылка на URL")
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, db_index=True, verbose_name="Дата обновления")
+
+    class Meta:
+        db_table = "gitlab_services"
+        ordering = ['created_at', 'updated_at']
+        verbose_name = "Gitlab. Сервисы"
+        verbose_name_plural = "Gitlab. Сервисы"
+
+    def __str__(self) -> str:
+        return self.repo_base_url
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+
 class GitlabRepositoryModel(models.Model):
-    repo_link = models.URLField(max_length=255, null=False, unique=True, verbose_name="Ссылка на репозиторий в Gitlab")
+    repository_id = models.BigIntegerField(blank=True, unique=True, verbose_name="ID репозитория в Gitlab")
     target_ref = models.TextField(
         max_length=64,
         null=False,
@@ -14,6 +32,7 @@ class GitlabRepositoryModel(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Активен ли репозиторий")
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, db_index=True, verbose_name="Дата обновления")
+    repository_model = models.ForeignKey(GitlabRepositoryBaseModel, on_delete=models.CASCADE, verbose_name="Базовый репозиторий")
 
     class Meta:
         db_table = "gitlab_repository"
@@ -22,7 +41,7 @@ class GitlabRepositoryModel(models.Model):
         verbose_name_plural = "Gitlab. Репозитории"
 
     def __str__(self) -> str:
-        return str(self.repo_link)
+        return str(self.repository_id)
 
 
 class GitlabRepositoryTokensModel(models.Model):

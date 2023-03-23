@@ -1,10 +1,10 @@
 from django.conf import settings
-from telegram import Bot, BotCommand, Update
-from telegram.ext import CommandHandler, ConversationHandler, Dispatcher
+from telegram import Bot, BotCommand
+from telegram.ext import CommandHandler, Dispatcher
 from telegrambot import telegram_bot
 from telegrambot.handlers import handlers as general_handlers
-from telegrambot.handlers.gitlab.handlers import registration_gitlab_handlers
-from telegrambot.utils.decorators import only_exists_user
+from telegrambot.handlers.gitlab import registration_gitlab_handlers
+
 
 if settings.DEBUG:
     dispatcher_kwargs = {
@@ -20,6 +20,7 @@ else:
 setup_commands = {
     'start': 'Начало работы с ботом',
     'gitlab': 'Список проектов для запуска в Gitlab',
+    'gitlabhistory': 'История запуска пайплайнов в Gitlab',
 }
 
 
@@ -31,12 +32,7 @@ def setup_dispatcher(dispatch: Dispatcher):
 
 def setup_bot_commands(bot_instance: Bot, commands: dict, /) -> None:
     telegram_bot.delete_my_commands()
-    bot_instance.set_my_commands(
-        [
-            BotCommand(command, description)
-            for command, description in commands.items()
-        ]
-    )
+    bot_instance.set_my_commands([BotCommand(command, description) for command, description in commands.items()])
 
 
 setup_bot_commands(telegram_bot, setup_commands)
