@@ -20,7 +20,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: local.Dockerfile
+      dockerfile: Dockerfile
     container_name: dtb_django
     restart: always
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
@@ -35,7 +35,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: local.Dockerfile
+      dockerfile: Dockerfile
     container_name: dtb_bot
     restart: always
     command: python runbot.py
@@ -46,7 +46,7 @@ services:
   celery:
     build:
       context: .
-      dockerfile: local.Dockerfile
+      dockerfile: Dockerfile
     container_name: dtb_celery
     restart: always
     command: celery -A application worker --loglevel=INFO
@@ -60,7 +60,7 @@ services:
   celery-beat:
     build:
       context: .
-      dockerfile: local.Dockerfile
+      dockerfile: Dockerfile
     container_name: dtb_beat
     restart: always
     command: celery -A application beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler

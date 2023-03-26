@@ -19,7 +19,7 @@ else:
 
 setup_commands = {
     'start': 'Начало работы с ботом',
-    'gitlab': 'Список проектов для запуска в Gitlab',
+    'projectlist': 'Список проектов для запуска автотестов',
     'gitlabhistory': 'История запуска пайплайнов в Gitlab',
 }
 

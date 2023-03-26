@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, verbose_name='Активен ли репозиторий')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата обновления')),
-                ('repository_model', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gitlab.gitlabrepositorybasemodel', verbose_name='Базовый репозиторий')),
+                ('repository_model', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gitlabapp.gitlabrepositorybasemodel', verbose_name='Базовый репозиторий')),
             ],
             options={
                 'verbose_name': 'Gitlab. Репозитории',
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GitlabRepositoryTokensModel',
             fields=[
-                ('gitlab_repository', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='gitlab.gitlabrepositorymodel', verbose_name='Gitlab Репозиторий')),
+                ('gitlab_repository', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='gitlabapp.gitlabrepositorymodel', verbose_name='Gitlab Репозиторий')),
                 ('trigger_token', models.TextField(max_length=64, verbose_name='Токен для доступа к Gitlab')),
                 ('private_token', models.TextField(max_length=64, verbose_name='Приватный токен доступа к Gitlab')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')),
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ('source', models.JSONField(default=dict, verbose_name='Исходный ответ JSON от Gitlab')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата обновления')),
-                ('repository', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gitlab.gitlabrepositorymodel', verbose_name='Репозиторий')),
+                ('repository', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gitlabapp.gitlabrepositorymodel', verbose_name='Репозиторий')),
             ],
             options={
                 'verbose_name': 'Gitlab. Pipeline',
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')),
                 ('updated_at', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата обновления')),
-                ('pipeline', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='gitlab.gitlabrepositorypipelinemodel', verbose_name='Gitlab. Pipeline')),
+                ('pipeline', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='gitlabapp.gitlabrepositorypipelinemodel', verbose_name='Gitlab. Pipeline')),
             ],
             options={
                 'verbose_name': 'Gitlab. История Pipelines',

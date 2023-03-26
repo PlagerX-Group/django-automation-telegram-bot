@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gitlab import models
+from gitlabapp import models
 
 
 @admin.register(models.GitlabRepositoryBaseModel)
@@ -14,12 +14,25 @@ class GitlabRepositoryAdmin(admin.ModelAdmin):
 @admin.register(models.GitlabRepositoryModel)
 class GitlabRepositoryAdmin(admin.ModelAdmin):
     list_display = [
-        'repository_model',
         'repository_id',
+        'name',
         'description',
         'is_active',
         'created_at',
         'updated_at',
+        'base_repository_model',
+    ]
+
+
+@admin.register(models.GitlabRepositoryRunsModel)
+class GitlabRunsAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'description',
+        'is_active',
+        'created_at',
+        'updated_at',
+        'repository_model',
     ]
 
 
