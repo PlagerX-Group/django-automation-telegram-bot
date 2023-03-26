@@ -9,7 +9,6 @@ from gitlabapp import models
 
 
 class TestGitlabRepositoryBaseModel:
-
     @pytest.fixture(scope="class")
     def get_single_model(cls, django_db_setup, django_db_blocker):
         with django_db_blocker.unblock():
@@ -34,7 +33,7 @@ class TestGitlabRepositoryBaseModel:
             (models.GitlabRepositoryBaseModel.repo_base_url, 'Базовая ссылка на URL'),
             (models.GitlabRepositoryBaseModel.created_at, 'Дата создания'),
             (models.GitlabRepositoryBaseModel.updated_at, 'Дата обновления'),
-        ]
+        ],
     )
     def test_fields_verbose_name(self, model_field: DeferredAttribute, expected_name: str):
         assert model_field.field.verbose_name == expected_name
