@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_beat',
     'debug_toolbar',
-    'telegramusers.apps.TelegramUsersConfig',
+    'extendeduser.apps.TelegramUsersConfig',
     'telegrambot.apps.TelegramBotConfig',
     'gitlabapp.apps.GitlabConfig',
 ]

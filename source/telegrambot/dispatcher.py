@@ -21,12 +21,14 @@ setup_commands = {
     'start': 'Начало работы с ботом',
     'projectlist': 'Список проектов для запуска автотестов',
     'gitlabhistory': 'История запуска пайплайнов в Gitlab',
+    'validateusersettigs': 'Валидация настроек пользователя',
 }
 
 
 def setup_dispatcher(dispatch: Dispatcher):
     registration_gitlab_handlers(dispatch)
     dispatch.add_handler(CommandHandler('start', general_handlers.start))
+    dispatch.add_handler(CommandHandler('validateusersettigs', general_handlers.validateusersettigs))
     return dispatch
 
 

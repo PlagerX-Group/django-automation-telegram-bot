@@ -1,8 +1,8 @@
 from django.contrib import admin
-from telegramusers.models import TelegramUserModel
+from extendeduser.models import ExtendedUserModel
 
 
-@admin.register(TelegramUserModel)
+@admin.register(ExtendedUserModel)
 class TelegramUserAdmin(admin.ModelAdmin):
     list_display = [
         'user',
