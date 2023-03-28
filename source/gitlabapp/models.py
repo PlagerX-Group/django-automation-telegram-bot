@@ -46,10 +46,10 @@ class GitlabRepositoryRunsModel(models.Model):
         default="master",
         verbose_name="Ветка для запуска пайплайна",
     )
-    description = models.TextField(max_length=64, null=True, verbose_name="Описание параметров")
+    description = models.TextField(max_length=64, default='', blank=True, null=True, verbose_name="Описание параметров")
     variables = models.JSONField(verbose_name="JSON с параметрами для создания пайплайна")
     is_active = models.BooleanField(default=True, verbose_name="Активны ли параметры")
-    warning_message = models.TextField(default='', max_length=255, verbose_name="Сообщение-предупреждение")
+    warning_message = models.TextField(default='', blank=True, null=True, max_length=255, verbose_name="Сообщение-предупреждение")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     repository_model = models.ForeignKey(GitlabRepositoryModel, on_delete=models.CASCADE, verbose_name="Модель репозитория")

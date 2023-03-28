@@ -1,4 +1,5 @@
 import enum
+import json
 
 from gitlab import Gitlab
 from gitlab.exceptions import GitlabAuthenticationError, GitlabGetError, GitlabError
@@ -71,7 +72,7 @@ def generate_pipeline_template(
 
     if isinstance(reason, str):
         kwargs.update({'pipereason': reason})
-        template += "\n<b>Причина:</b> {pipereason}"
+        template += "\n<b>Причина(-ы):</b> {pipereason}"
 
     return template.format(**kwargs)
 
@@ -181,31 +182,64 @@ def gitlab_confirm_run_pipeline(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
+    # Получаем информацию по пользователю
+    gitlab_user = gitlab_repo.users.list(username='Matveev_KA')
+    if len(gitlab_user) == 1:
+        gitlab_user_id = gitlab_user[0].id
+    else:
+        gitlab_user_id = gitlab_repo.user.encoded_id
+
+
     try:
-        pipeline = project.trigger_pipeline(
-            ref=run_model.ref,
-            token=repository_model.gitlabrepositorytokensmodel.trigger_token,
+
+        # Параметры для запуска тестов.
+        run_kwargs = dict(run_model.variables)
+        run_kwargs.setdefault('CI_PIPELINE_SOURCE', 'api')
+        run_kwargs.setdefault('SOURCE_FROM', 'TELEGRAM_BOT')
+        transform_variables = [{'key': k, 'value': v} for k, v in run_kwargs.items()]
+
+        pipeline = project.pipelines.create(
+            {
+                'ref': run_model.ref,
+                'user_id': gitlab_user_id,
+                'variables': transform_variables,
+            },
         )
-        pipeline_model = GitlabRepositoryPipelineModel.objects.create(
-            pipeline_id=pipeline.encoded_id,
-            web_url=pipeline.attributes.get('web_url'),
-            repository=repository_model,
-        )
-        pipeline_model_history = GitlabRepositoryPipelineHistoryModel.objects.create(
-            source=pipeline.attributes,
-            status=pipeline.attributes.get('status'),
-            pipeline=pipeline_model,
-        )
+
     except GitlabError as ex:
+        response_text = ex.response_body.decode('utf-8')
+        try:
+            response_json = json.loads(response_text)
+            response_text = '\n'.join([
+                f"{index + 1}) {reason}"
+                for index, reason in enumerate(response_json['message']['base'])
+            ])
+            response = f'\n{response_text}'
+        except (KeyError, json.JSONDecodeError):
+            response = response_text
+
         query.message.edit_text(
             generate_pipeline_template(
                 run_id,
                 PipelineStatusEnum.NOT_STARTED_WITH_ERRORS,
-                reason=ex.response_body.decode('utf-8'),
+                reason=response,
             )
         )
         return ConversationHandler.END
 
+    # Обновляем данные по пайплайнам.
+    pipeline_model = GitlabRepositoryPipelineModel.objects.create(
+        pipeline_id=pipeline.encoded_id,
+        web_url=pipeline.attributes.get('web_url'),
+        repository=repository_model,
+    )
+    pipeline_model_history = GitlabRepositoryPipelineHistoryModel.objects.create(
+        source=pipeline.attributes,
+        status=pipeline.attributes.get('status'),
+        pipeline=pipeline_model,
+    )
+
+    # Изменяем сообщение.
     query.edit_message_text(
         generate_pipeline_template(run_id, PipelineStatusEnum.STARTED), reply_markup=InlineKeyboardMarkup(buttons)
     )
